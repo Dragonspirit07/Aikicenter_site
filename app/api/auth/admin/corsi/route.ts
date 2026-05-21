@@ -14,13 +14,13 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { nome, sottotitolo, descrizione, eta } = body;
+    const { nome, sottotitolo, descrizione, eta, colore } = body;
 
     if (!nome?.trim() || !sottotitolo?.trim() || !descrizione?.trim() || !eta?.trim()) {
       return NextResponse.json({ error: "Tutti i campi sono obbligatori." }, { status: 400 });
     }
 
-    await createCorso({ nome, sottotitolo, descrizione, eta });
+    await createCorso({ nome, sottotitolo, descrizione, eta, colore: colore || "#D32F2F" });
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (e) {
     console.error(e);

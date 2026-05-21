@@ -23,13 +23,13 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { nome, sottotitolo, descrizione, eta } = body;
+    const { nome, sottotitolo, descrizione, eta, colore } = body;
 
     if (!nome?.trim() || !sottotitolo?.trim() || !descrizione?.trim() || !eta?.trim()) {
       return NextResponse.json({ error: "Tutti i campi sono obbligatori." }, { status: 400 });
     }
 
-    const updated = await updateCorso(Number(id), { nome, sottotitolo, descrizione, eta });
+    const updated = await updateCorso(Number(id), { nome, sottotitolo, descrizione, eta, colore });
     if (!updated) return NextResponse.json({ error: "Corso non trovato." }, { status: 404 });
     return NextResponse.json({ ok: true });
   } catch (e) {

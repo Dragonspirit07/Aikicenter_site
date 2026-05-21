@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ interface Corso {
   sottotitolo: string;
   descrizione: string;
   eta: string;
+  colore: string;
 }
 
 interface Lezione {
@@ -29,7 +30,7 @@ interface Lezione {
 const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
 
 const emptyCorso = (): Omit<Corso, "id"> => ({
-  nome: "", sottotitolo: "", descrizione: "", eta: "",
+  nome: "", sottotitolo: "", descrizione: "", eta: "", colore: "#D32F2F",
 });
 
 const emptyLezione = (): Omit<Lezione, "id_lezione" | "nome_corso" | "eta"> => ({
@@ -87,6 +88,28 @@ function CorsoForm({
       <div className="field-group">
         <label>Fascia età *</label>
         <input required value={form.eta} onChange={(e) => set("eta", e.target.value)} placeholder="es. 14+ anni" />
+      </div>
+      <div className="field-group">
+        <label>Colore corso</label>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            <input
+              type="color"
+              value={form.colore || "#D32F2F"}
+              onChange={(e) => set("colore", e.target.value)}
+              style={{ width: 36, height: 36, padding: 2, border: "1px solid #d1d5db", borderRadius: 6, cursor: "pointer" }}
+              title="Scegli colore personalizzato"
+            />
+            <input
+              value={form.colore || "#D32F2F"}
+              onChange={(e) => set("colore", e.target.value)}
+              placeholder="#D32F2F"
+              pattern="^#[0-9A-Fa-f]{6}$"
+              maxLength={7}
+              style={{ fontFamily: "monospace", width: 100, padding: "0.4rem 0.6rem", border: "1px solid #d1d5db", borderRadius: 6, fontSize: "0.88rem" }}
+            />  
+          </div>
+        </div>
       </div>
       <div className="form-actions">
         <button type="button" className="btn-secondary" onClick={onCancel} disabled={saving}>Annulla</button>
@@ -364,18 +387,20 @@ export default function AdminPage() {
             {corsi.map((corso) => (
               <div key={corso.id} className="data-card">
                 <div className="card-top">
-                  <div className="card-badge">{corso.eta}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span style={{
+                      display: "inline-block",
+                      width: 12, height: 12,
+                      borderRadius: "50%",
+                      background: corso.colore || "#D32F2F",
+                      flexShrink: 0,
+                      border: "1px solid rgba(0,0,0,0.1)",
+                    }} />
+                    <div className="card-badge">{corso.eta}</div>
+                  </div>
                   <div className="card-actions">
-                    <button
-                      className="icon-btn edit"
-                      title="Modifica"
-                      onClick={() => setCorsoModal(corso)}
-                    >✏️</button>
-                    <button
-                      className="icon-btn delete"
-                      title="Elimina"
-                      onClick={() => setDeleteTarget({ type: "corso", id: corso.id, label: corso.nome })}
-                    >🗑️</button>
+                    <button className="icon-btn edit" title="Modifica" onClick={() => setCorsoModal(corso)}>✏️</button>
+                    <button className="icon-btn delete" title="Elimina" onClick={() => setDeleteTarget({ type: "corso", id: corso.id, label: corso.nome })}>🗑️</button>
                   </div>
                 </div>
                 <h3 className="card-title">{corso.nome}</h3>
