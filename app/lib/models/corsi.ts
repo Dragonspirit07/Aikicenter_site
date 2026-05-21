@@ -8,6 +8,7 @@ export interface CorsoRow extends RowDataPacket {
   sottotitolo: string;
   descrizione: string;
   eta:         string;
+  colore:      string;
 }
 
 // ── Tipo input ─────────────────────────────────────────────────
@@ -16,18 +17,19 @@ export interface CorsoInput {
   sottotitolo: string;
   descrizione: string;
   eta:         string;
+  colore:      string;
 }
 
 export async function getAllCorsi(): Promise<CorsoRow[]> {
   const [rows] = await pool.query<CorsoRow[]>(
-    "SELECT id, nome, sottotitolo, descrizione, eta FROM corsi ORDER BY id"
+    "SELECT id, nome, sottotitolo, descrizione, eta, colore FROM corsi ORDER BY id"
   );
   return rows;
 }
 
 export async function getCorsoById(id: number): Promise<CorsoRow | null> {
   const [rows] = await pool.query<CorsoRow[]>(
-    "SELECT id, nome, sottotitolo, descrizione, eta FROM corsi WHERE id = ? LIMIT 1",
+    "SELECT id, nome, sottotitolo, descrizione, eta, colore FROM corsi WHERE id = ? LIMIT 1",
     [id]
   );
   return rows[0] ?? null;
@@ -41,9 +43,12 @@ export async function createCorso(data: CorsoInput): Promise<boolean> {
     throw new Error("Field length exceeds maximum allowed");
   }
 
+  // Valida formato colore HEX
+  const colore = /^#[0-9A-Fa-f]{6}$/.test(data.colore ?? "") ? data.colore : "#D32F2F";
+
   const [result] = await pool.execute(
-    "INSERT INTO corsi (nome, sottotitolo, descrizione, eta) VALUES (?, ?, ?, ?)",
-    [data.nome.trim(), data.sottotitolo.trim(), data.descrizione.trim(), data.eta.trim()]
+    "INSERT INTO corsi (nome, sottotitolo, descrizione, eta, colore) VALUES (?, ?, ?, ?, ?)",
+    [data.nome.trim(), data.sottotitolo.trim(), data.descrizione.trim(), data.eta.trim(), colore]
   );
   return result.affectedRows > 0;
 }
@@ -62,6 +67,11 @@ export async function updateCorso(id: number, data: Partial<CorsoInput>): Promis
   if (data.sottotitolo !== undefined) { fields.push("sottotitolo = ?"); values.push(data.sottotitolo.trim()); }
   if (data.descrizione !== undefined) { fields.push("descrizione = ?"); values.push(data.descrizione.trim()); }
   if (data.eta         !== undefined) { fields.push("eta = ?");         values.push(data.eta.trim()); }
+  if (data.colore      !== undefined) {
+    const colore = /^#[0-9A-Fa-f]{6}$/.test(data.colore) ? data.colore : "#D32F2F";
+    fields.push("colore = ?");
+    values.push(colore);
+  }
 
   if (fields.length === 0) return false;
   values.push(id);

@@ -87,19 +87,13 @@ main > h4 { font-weight: normal; max-width: 900px; margin-bottom: 1rem; }
   font-style: italic;
 }
 
-/* ── PALLINO GRIGLIA ── */
+/* ── PALLINO GRIGLIA (colore via style inline) ── */
 .lezione-dot {
   width: 9px; height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
   margin-top: 5px;
 }
-.lezione-dot--aikido-bambini  { background: #378ADD; }
-.lezione-dot--aikido-junior   { background: #639922; }
-.lezione-dot--aikido-teenager { background: #BA7517; }
-.lezione-dot--aikido-adulti   { background: #D85A30; }
-.lezione-dot--aikido-extra    { background: #7F77DD; }
-.lezione-dot--shodaigyo       { background: #1D9E75; }
 
 /* ── INFO LEZIONE ── */
 .lezione-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
@@ -142,6 +136,7 @@ main > h4 { font-weight: normal; max-width: 900px; margin-bottom: 1rem; }
   gap: 1.5rem;
 }
 
+/* border-left-color viene impostato inline tramite style */
 .legenda-item {
   display: flex;
   gap: 1rem;
@@ -151,26 +146,14 @@ main > h4 { font-weight: normal; max-width: 900px; margin-bottom: 1rem; }
   border-left: 4px solid;
   align-items: flex-start;
 }
-.legenda-item--aikido-bambini  { border-left-color: #378ADD; }
-.legenda-item--aikido-junior   { border-left-color: #639922; }
-.legenda-item--aikido-teenager { border-left-color: #BA7517; }
-.legenda-item--aikido-adulti   { border-left-color: #D85A30; }
-.legenda-item--aikido-extra    { border-left-color: #7F77DD; }
-.legenda-item--shodaigyo       { border-left-color: #1D9E75; }
 
-/* ── PALLINO LEGENDA ── */
+/* ── PALLINO LEGENDA (colore via style inline) ── */
 .legenda-dot {
   width: 16px; height: 16px;
   border-radius: 50%;
   flex-shrink: 0;
   margin-top: 6px;
 }
-.legenda-dot--aikido-bambini  { background: #378ADD; }
-.legenda-dot--aikido-junior   { background: #639922; }
-.legenda-dot--aikido-teenager { background: #BA7517; }
-.legenda-dot--aikido-adulti   { background: #D85A30; }
-.legenda-dot--aikido-extra    { background: #7F77DD; }
-.legenda-dot--shodaigyo       { background: #1D9E75; }
 
 .legenda-content {
   flex: 1;

@@ -19,6 +19,7 @@ export interface LezioneConCorso extends RowDataPacket {
   nome_corso:       string;
   sottotitolo:      string;
   eta:              string;
+  colore:           string;
 }
 
 // ── Tipo input ─────────────────────────────────────────────────
@@ -39,7 +40,8 @@ export async function getAllLezioni(): Promise<LezioneConCorso[]> {
       l.id_corso,
       c.nome        AS nome_corso,
       c.sottotitolo,
-      c.eta
+      c.eta,
+      c.colore
     FROM lezioni l INNER JOIN corsi c ON c.id = l.id_corso
     ORDER BY
       FIELD(l.giorno_settimana,'Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'),
@@ -58,7 +60,8 @@ export async function getLezioniByGiorno(giorno: string): Promise<LezioneConCors
       l.id_corso,
       c.nome        AS nome_corso,
       c.sottotitolo,
-      c.eta
+      c.eta,
+      c.colore
     FROM lezioni l INNER JOIN corsi c ON c.id = l.id_corso
     WHERE l.giorno_settimana = ?
     ORDER BY l.orario_inizio

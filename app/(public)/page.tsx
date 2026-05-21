@@ -14,10 +14,6 @@ export const metadata: Metadata = {
 
 const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
-function slugCorso(nome: string): string {
-  return nome.toLowerCase().replace(/ō/g, "o").replace(/\s+/g, "-");
-}
-
 function raggruppaPerGiorno(lezioni: LezioneConCorso[]) {
   return GIORNI.map((giorno) => ({
     giorno,
@@ -49,7 +45,10 @@ function GiornoCard({ giorno, lezioni }: { giorno: string; lezioni: LezioneConCo
       <div className="giorno-body">
         {lezioni.map((l) => (
           <div key={l.id_lezione} className="lezione-row">
-            <div className={`lezione-dot lezione-dot--${slugCorso(l.nome_corso)}`} />
+            <div
+              className="lezione-dot"
+              style={{ background: l.colore ?? "#D32F2F" }}
+            />
             <div className="lezione-info">
               <span className="lezione-corso">{l.nome_corso}</span>
               <span className="lezione-meta">
@@ -101,22 +100,26 @@ export default async function OrariPage() {
       <div className="legenda">
         <h2>I Nostri Corsi</h2>
         <ul className="legenda-lista">
-          {corsi.map((corso) => {
-            const slug = slugCorso(corso.nome);
-            return (
-              <li key={corso.id} className={`legenda-item legenda-item--${slug}`}>
-                <div className="legenda-content">
-                  <div className="legenda-header">
-                    <span className={`legenda-dot legenda-dot--${slug}`} />
-                    <strong className="legenda-nome">{corso.nome}</strong>
-                    <span className="legenda-eta">{corso.eta}</span>
-                  </div>
-                  <p className="legenda-sottotitolo">{corso.sottotitolo}</p>
-                  <p className="legenda-descrizione">{corso.descrizione}</p>
+          {corsi.map((corso) => (
+            <li
+              key={corso.id}
+              className="legenda-item"
+              style={{ borderLeftColor: corso.colore ?? "#D32F2F" }}
+            >
+              <div className="legenda-content">
+                <div className="legenda-header">
+                  <div
+                    className="legenda-dot"
+                    style={{ background: corso.colore ?? "#D32F2F" }}
+                  />
+                  <strong className="legenda-nome">{corso.nome}</strong>
+                  <span className="legenda-eta">{corso.eta}</span>
                 </div>
-              </li>
-            );
-          })}
+                <p className="legenda-sottotitolo">{corso.sottotitolo}</p>
+                <p className="legenda-descrizione">{corso.descrizione}</p>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
 
