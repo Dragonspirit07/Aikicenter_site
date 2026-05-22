@@ -84,7 +84,7 @@ export async function verifyToken(token: string): Promise<JwtPayload> {
     "HMAC",
     key,
     b64urlDecode(sig) as BufferSource,                            
-    new TextEncoder().encode(`${header}.${body}`)
+    new TextEncoder().encode(`${headerB64}.${body}`)
   );
 
   if (!valid) throw new Error("Firma JWT non valida.");
