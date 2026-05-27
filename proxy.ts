@@ -54,16 +54,29 @@ async function verifyJwt(token: string): Promise<boolean> {
 export async function proxy(req: NextRequest) {
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const isValid = token ? await verifyJwt(token) : false;
- 
-  if (!isValid) {
+  
+  const isLoginPage = req.nextUrl.pathname === "/login";
+
+  // Scenario 1: L'utente È autenticato e sta cercando di andare su /login
+  // Lo mandiamo direttamente all'admin
+  if (isValid && isLoginPage) {
+    return NextResponse.redirect(new URL("/admin", req.url));
+  }
+
+  // Scenario 2: L'utente NON è autenticato e sta cercando di andare su una pagina protetta (NON /login)
+  // Lo rimandiamo al login
+  if (!isValid && !isLoginPage) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("from", req.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
- 
+
+  // Scenario 3: 
+  // - Utente autenticato che va su /admin -> Passa!
+  // - Utente NON autenticato che va su /login (es. dopo il logout) -> Passa!
   return NextResponse.next();
 }
- 
+
 export const config = {
-  matcher: ["/admin/:path*", "/api/auth/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/auth/admin/:path*", "/login"],
 };
