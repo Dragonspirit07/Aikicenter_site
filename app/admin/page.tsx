@@ -343,8 +343,14 @@ export default function AdminPage() {
           </div>
 
           <div className="sidebar-footer">
-            <Link href="/" className="sidebar-link">← Vai al sito</Link>
-            <button className="logout-btn" onClick={handleLogout}>Esci</button>
+            <Link href="/" className="sidebar-link" title="Vai al sito">
+              <span className="footer-icon">🏠</span>
+              <span className="footer-text">Vai al sito</span>
+            </Link>
+            <button className="logout-btn" onClick={handleLogout} title="Esci">
+              <span className="footer-icon">🚪</span>
+              <span className="footer-text">Esci</span>
+            </button>
           </div>
         </aside>
 
@@ -435,7 +441,7 @@ export default function AdminPage() {
                   <div className="table-header">
                     <span>Orario</span>
                     <span>Corso</span>
-                    <span>Fascia età</span>
+                    <span className="th-eta">Fascia età</span>
                     <span className="th-actions">Azioni</span>
                   </div>
                   {lz.map((l) => (

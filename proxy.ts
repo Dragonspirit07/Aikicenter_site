@@ -1,12 +1,12 @@
 // Protegge tutte le route /admin verificando il JWT nel cookie.
-// Usa solo Web Crypto API: gira nell'Edge Runtime senza dipendenze.
+// Con Next.js 16+, questa logica corre come Proxy (Node.js runtime di default).
  
 import { NextRequest, NextResponse } from "next/server";
  
 const COOKIE_NAME = "aiki_admin_token";
  
-// ── Helpers base64url (duplicati qui perché il middleware
-//    non può importare da lib/ nel Edge Runtime di Next.js) ────────────
+// ── Helpers base64url (duplicati qui perché il proxy
+//    non può importare liberamente da lib/ in base alla configurazione) ────
 function b64urlDecode(str: string): Uint8Array<ArrayBuffer> {
   const base64 = str.replace(/-/g, "+").replace(/_/g, "/");
   const binary = atob(base64);
@@ -50,8 +50,8 @@ async function verifyJwt(token: string): Promise<boolean> {
   }
 }
  
-// ── Middleware ────────────────────────────────────────────────────────
-export async function middleware(req: NextRequest) {
+// ── Proxy ─────────────────────────────────────────────
+export async function proxy(req: NextRequest) {
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const isValid = token ? await verifyJwt(token) : false;
  
