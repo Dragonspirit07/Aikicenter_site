@@ -147,7 +147,7 @@ export default async function OrariPage() {
         <a href="tel:1234567890">123 456 7890</a>
       </p>
 
-      <a href="/iscrizione" target="_blank" rel="noopener noreferrer">
+      <a href="/login" rel="noopener noreferrer">
         <button className="btn" type="button">Preiscriviti Ora</button>
       </a>
     </main>

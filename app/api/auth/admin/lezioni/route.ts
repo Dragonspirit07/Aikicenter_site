@@ -34,6 +34,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Errore nella creazione della lezione." }, { status: 500 });
+    const msg = e instanceof Error ? e.message : "Errore nella creazione della lezione.";
+    return NextResponse.json({ error: msg }, { status: 409 });
   }
 }

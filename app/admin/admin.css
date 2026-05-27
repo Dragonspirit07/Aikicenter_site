@@ -662,3 +662,59 @@
     font-size: 1.2rem;
   }
 }
+
+.utenti-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.utente-section {
+  background: var(--bg_contenuti);
+  border: 1px solid var(--bordi);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.utente-intestazione {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+
+.utente-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.utente-email { color: var(--bordi); }
+.utente-tel   { color: var(--bordi); }
+.utente-data  { color: var(--bordi); font-style: italic; }
+
+.utente-count {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: var(--titoli);
+  white-space: nowrap;
+}
+
+.utente-section .lezioni-table {
+  border: none;
+  border-radius: 0;
+}
+
+.utente-section .table-row span {
+  font-size: 0.85rem;
+}
+
+.utente-section .corso-nome {
+  border-left: 4px solid;
+  padding-left: 0.5rem;
+}

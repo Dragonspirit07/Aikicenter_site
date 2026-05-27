@@ -40,8 +40,9 @@ async function getKey(): Promise<CryptoKey> {
 
 // ── Payload del token ─────────────────────────────────────────────────
 export interface JwtPayload {
-  sub: string;   // username
-  role: string;  // "admin"
+  sub: string;   // username / email
+  role: string;  // "admin" | "utente"
+  id?: number;   // user id (solo per utenti)
   iat: number;   // issued at (epoch secondi)
   exp: number;   // expiration (epoch secondi)
 }

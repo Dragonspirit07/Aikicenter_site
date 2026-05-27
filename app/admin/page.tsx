@@ -27,6 +27,21 @@ interface Lezione {
   eta?: string;
 }
 
+interface IscrizioneRow {
+  id: number;
+  nome: string;
+  cognome: string;
+  email: string;
+  telefono: string;
+  data_nascita: string;
+  id_lezione: number | null;
+  giorno_settimana: string | null;
+  orario_inizio: string | null;
+  orario_fine: string | null;
+  nome_corso: string | null;
+  colore: string | null;
+}
+
 const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
 const emptyCorso = (): Omit<Corso, "id"> => ({
@@ -188,11 +203,12 @@ export default function AdminPage() {
   // Dati
   const [corsi, setCorsi] = useState<Corso[]>([]);
   const [lezioni, setLezioni] = useState<Lezione[]>([]);
+  const [utenti, setUtenti] = useState<IscrizioneRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
 
   // Navigazione
-  const [tab, setTab] = useState<"corsi" | "lezioni">("corsi");
+  const [tab, setTab] = useState<"corsi" | "lezioni" | "utenti">("corsi");
 
   // Modali
   const [corsoModal, setCorsoModal] = useState<null | "new" | Corso>(null);
@@ -204,13 +220,15 @@ export default function AdminPage() {
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [rc, rl] = await Promise.all([
+      const [rc, rl, ru] = await Promise.all([
         fetch("/api/auth/admin/corsi"),
         fetch("/api/auth/admin/lezioni"),
+        fetch("/api/auth/admin/iscrizioni"),
       ]);
       if (rc.status === 401 || rl.status === 401) { router.push("/login"); return; }
       setCorsi(await rc.json());
       setLezioni(await rl.json());
+      setUtenti(await ru.json());
     } catch {
       showToast("Errore durante il caricamento dei dati.", "err");
     } finally {
@@ -305,6 +323,27 @@ export default function AdminPage() {
     }
   }
 
+  // ── Raggruppa utenti con lezioni ──────────────────────────────────
+  function raggruppaUtenti(rows: IscrizioneRow[]) {
+    const map = new Map<number, { id: number; nome: string; cognome: string; email: string; telefono: string; data_nascita: string; lezioni: { id_lezione: number; giorno_settimana: string; orario_inizio: string; orario_fine: string; nome_corso: string; colore: string }[] }>();
+    for (const r of rows) {
+      if (!map.has(r.id)) {
+        map.set(r.id, { id: r.id, nome: r.nome, cognome: r.cognome, email: r.email, telefono: r.telefono, data_nascita: r.data_nascita, lezioni: [] });
+      }
+      if (r.id_lezione) {
+        map.get(r.id)!.lezioni.push({
+          id_lezione: r.id_lezione,
+          giorno_settimana: r.giorno_settimana!,
+          orario_inizio: r.orario_inizio!,
+          orario_fine: r.orario_fine!,
+          nome_corso: r.nome_corso!,
+          colore: r.colore!,
+        });
+      }
+    }
+    return Array.from(map.values());
+  }
+
   // ── Raggruppa lezioni per giorno ──────────────────────────────────
   const lezioniPerGiorno = GIORNI.map((g) => ({
     giorno: g,
@@ -340,6 +379,14 @@ export default function AdminPage() {
               <span>Lezioni</span>
               <span className="nav-badge">{lezioni.length}</span>
             </button>
+            <button
+              className={`nav-item ${tab === "utenti" ? "active" : ""}`}
+              onClick={() => setTab("utenti")}
+            >
+              <span className="nav-icon">👥</span>
+              <span>Utenti</span>
+              <span className="nav-badge">{new Set(utenti.map((u) => u.id)).size}</span>
+            </button>
           </div>
 
           <div className="sidebar-footer">
@@ -359,19 +406,23 @@ export default function AdminPage() {
           {/* Header */}
           <header className="content-header">
             <div>
-              <h1>{tab === "corsi" ? "Corsi" : "Lezioni"}</h1>
+              <h1>{tab === "corsi" ? "Corsi" : tab === "lezioni" ? "Lezioni" : "Utenti"}</h1>
               <p className="header-sub">
                 {tab === "corsi"
                   ? "Gestisci i corsi offerti dall'AIKI CENTER ETS"
-                  : "Gestisci gli orari delle lezioni settimanali"}
+                  : tab === "lezioni"
+                  ? "Gestisci gli orari delle lezioni settimanali"
+                  : "Visualizza gli utenti iscritti e le loro lezioni"}
               </p>
             </div>
-            <button
-              className="btn-add"
-              onClick={() => tab === "corsi" ? setCorsoModal("new") : setLezioneModal("new")}
-            >
-              + Aggiungi {tab === "corsi" ? "corso" : "lezione"}
-            </button>
+            {tab !== "utenti" && (
+              <button
+                className="btn-add"
+                onClick={() => tab === "corsi" ? setCorsoModal("new") : setLezioneModal("new")}
+              >
+                + Aggiungi {tab === "corsi" ? "corso" : "lezione"}
+              </button>
+            )}
           </header>
 
         {/* Loading */}
@@ -464,6 +515,52 @@ export default function AdminPage() {
                     </div>
                   ))}
                 </div>
+              </section>
+            ))}
+          </div>
+        )}
+
+        {/* ── TAB UTENTI ── */}
+        {!loading && tab === "utenti" && (
+          <div className="utenti-container">
+            {utenti.length === 0 && (
+              <div className="empty-state">
+                <p>Nessun utente registrato.</p>
+              </div>
+            )}
+            {raggruppaUtenti(utenti).map((utente) => (
+              <section key={utente.id} className="utente-section">
+                <div className="utente-intestazione">
+                  <div className="utente-info">
+                    <strong>{utente.nome} {utente.cognome}</strong>
+                    <span className="utente-email">{utente.email}</span>
+                    <span className="utente-tel">{utente.telefono}</span>
+                    <span className="utente-data">Nato: {utente.data_nascita?.split("T")[0]}</span>
+                  </div>
+                  <span className="utente-count">
+                    {utente.lezioni.length === 0
+                      ? "Nessuna lezione"
+                      : `${utente.lezioni.length} ${utente.lezioni.length === 1 ? "lezione" : "lezioni"}`}
+                  </span>
+                </div>
+                {utente.lezioni.length > 0 && (
+                  <div className="lezioni-table">
+                    <div className="table-header">
+                      <span>Giorno</span>
+                      <span>Orario</span>
+                      <span>Corso</span>
+                    </div>
+                    {utente.lezioni.map((l, i) => (
+                      <div key={`${utente.id}-${l.id_lezione ?? i}`} className="table-row">
+                        <span>{l.giorno_settimana}</span>
+                        <span className="orario-pill">{l.orario_inizio} – {l.orario_fine}</span>
+                        <span className="corso-nome" style={{ borderLeftColor: l.colore ?? "#D32F2F" }}>
+                          {l.nome_corso}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </section>
             ))}
           </div>

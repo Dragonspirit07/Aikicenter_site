@@ -86,6 +86,22 @@ export async function getLezioneById(id: number): Promise<LezioneRow | null> {
   return rows[0] ?? null;
 }
 
+export async function checkConflittoOrario(
+  giorno: string, inizio: string, fine: string, excludeId?: number
+): Promise<boolean> {
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT COUNT(*) AS cnt FROM lezioni
+     WHERE giorno_settimana = ?
+       AND orario_inizio < ?
+       AND ? < orario_fine
+       ${excludeId ? "AND id_lezione != ?" : ""}`,
+    excludeId
+      ? [giorno, fine, inizio, excludeId]
+      : [giorno, fine, inizio]
+  );
+  return rows[0].cnt > 0;
+}
+
 export async function createLezione(data: LezioneInput): Promise<boolean> {
   if (!data.giorno_settimana?.trim() || !data.orario_inizio?.trim() || !data.orario_fine?.trim()) {
     throw new Error("giorno_settimana, orario_inizio, and orario_fine are required");
@@ -95,6 +111,13 @@ export async function createLezione(data: LezioneInput): Promise<boolean> {
   }
   if (!/^\d{2}:\d{2}$/.test(data.orario_inizio) || !/^\d{2}:\d{2}$/.test(data.orario_fine)) {
     throw new Error("orario_inizio and orario_fine must be in HH:MM format");
+  }
+
+  const conflitto = await checkConflittoOrario(
+    data.giorno_settimana.trim(), data.orario_inizio.trim(), data.orario_fine.trim()
+  );
+  if (conflitto) {
+    throw new Error("Esiste già una lezione in questo giorno e orario.");
   }
 
   const [result] = await pool.execute(
@@ -113,12 +136,23 @@ export async function updateLezione(id: number, data: Partial<LezioneInput>): Pr
     throw new Error("orario_inizio and orario_fine must be in HH:MM format");
   }
 
+  const giorno = data.giorno_settimana?.trim();
+  const inizio = data.orario_inizio?.trim();
+  const fine   = data.orario_fine?.trim();
+
+  if (giorno && inizio && fine) {
+    const conflitto = await checkConflittoOrario(giorno, inizio, fine, id);
+    if (conflitto) {
+      throw new Error("Esiste già una lezione in questo giorno e orario.");
+    }
+  }
+
   const fields: string[] = [];
   const values: unknown[] = [];
 
-  if (data.giorno_settimana !== undefined) { fields.push("giorno_settimana = ?"); values.push(data.giorno_settimana.trim()); }
-  if (data.orario_inizio    !== undefined) { fields.push("orario_inizio = ?");    values.push(data.orario_inizio.trim()); }
-  if (data.orario_fine      !== undefined) { fields.push("orario_fine = ?");      values.push(data.orario_fine.trim()); }
+  if (data.giorno_settimana !== undefined) { fields.push("giorno_settimana = ?"); values.push(giorno); }
+  if (data.orario_inizio    !== undefined) { fields.push("orario_inizio = ?");    values.push(inizio); }
+  if (data.orario_fine      !== undefined) { fields.push("orario_fine = ?");      values.push(fine); }
   if (data.id_corso         !== undefined) { fields.push("id_corso = ?");         values.push(data.id_corso); }
 
   if (fields.length === 0) return false;

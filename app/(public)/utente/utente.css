@@ -1,0 +1,195 @@
+.utente-main {
+  min-height: 100vh;
+  padding: calc(100px + 2rem) 5% 2rem;
+  background: var(--sfondo);
+  font-family: serif;
+  width: 100%;
+}
+
+.utente-loading, .utente-error {
+  text-align: center;
+  padding: 4rem 0;
+  font-size: 1.2rem;
+  color: var(--sottotitoli);
+}
+
+.utente-error { color: var(--titoli); }
+
+.utente-toast {
+  position: fixed;
+  top: 120px;
+  right: 2rem;
+  z-index: 100;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  animation: slideIn 0.3s ease;
+}
+.utente-toast.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.utente-toast.error   { background: #fff0f0; color: var(--titoli); border: 1px solid #f5c6c6; }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.utente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.utente-header h1 { margin: 0; color: var(--titoli); }
+
+.logout-btn {
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-family: serif;
+  font-weight: bold;
+  background: transparent;
+  border: 2px solid var(--titoli);
+  color: var(--titoli);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.logout-btn:hover { background: var(--titoli); color: #fff; }
+
+.utente-profilo {
+  background: var(--bg_contenuti);
+  border: 1px solid var(--bordi);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+}
+.utente-profilo h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  color: var(--titoli);
+}
+.utente-profilo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  font-size: 1rem;
+}
+
+.utente-lezioni { margin-bottom: 2rem; }
+.utente-lezioni h2 {
+  font-size: 1.4rem;
+  color: var(--titoli);
+  margin: 0 0 0.3rem;
+}
+.utente-note {
+  font-size: 0.9rem;
+  color: var(--bordi);
+  margin: 0 0 1.5rem;
+}
+
+.lezione-toggle {
+  flex-shrink: 0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: 2px solid var(--titoli);
+  background: transparent;
+  color: var(--titoli);
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-family: serif;
+}
+.lezione-toggle:hover { background: var(--titoli); color: #fff; }
+.lezione-toggle.iscritto {
+  background: var(--titoli);
+  color: #fff;
+  border-color: var(--titoli);
+}
+.lezione-toggle.iscritto:hover {
+  background: transparent;
+  color: var(--titoli);
+}
+
+.orari-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.giorno-card {
+  background: var(--bg_contenuti);
+  border: 1px solid var(--bordi);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.giorno-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(211,47,47,0.12);
+}
+.giorno-card--vuoto { opacity: 0.7; }
+.giorno-card--vuoto:hover { transform: none; box-shadow: none; }
+
+.giorno-header { background: var(--titoli); padding: 0.6rem 1.2rem; }
+.giorno-card--vuoto .giorno-header { background: var(--bordi); }
+.giorno-nome {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.giorno-body { padding: 0.5rem 0; }
+
+.lezione-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.55rem 1.2rem;
+  border-bottom: 1px dashed #ebebeb;
+  transition: background 0.15s;
+}
+.lezione-row:last-child { border-bottom: none; }
+.lezione-row:hover      { background: #fafafa; }
+
+.lezione-riposo {
+  padding: 0.75rem 1.2rem;
+  font-size: 0.9rem;
+  color: var(--bordi);
+  font-style: italic;
+}
+
+.lezione-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.lezione-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.lezione-corso { font-size: 0.92rem; font-weight: bold; color: var(--sottotitoli); line-height: 1.3; }
+.lezione-meta  { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+
+.lezione-orario {
+  font-size: 0.72rem;
+  font-weight: bold;
+  color: #fff;
+  background: var(--titoli);
+  padding: 0 7px;
+  line-height: 1.6;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+.lezione-eta { font-size: 0.78rem; color: var(--bordi); font-style: italic; }
+
+@media (max-width: 600px) {
+  .utente-profilo-grid { grid-template-columns: 1fr; }
+  .utente-toast { right: 1rem; left: 1rem; }
+}

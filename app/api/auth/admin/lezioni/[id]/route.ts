@@ -44,7 +44,8 @@ export async function PUT(
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: "Errore nell'aggiornamento della lezione." }, { status: 500 });
+    const msg = e instanceof Error ? e.message : "Errore nell'aggiornamento della lezione.";
+    return NextResponse.json({ error: msg }, { status: 409 });
   }
 }
 
