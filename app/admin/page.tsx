@@ -27,7 +27,7 @@ interface Lezione {
   eta?: string;
 }
 
-const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
 const emptyCorso = (): Omit<Corso, "id"> => ({
   nome: "", sottotitolo: "", descrizione: "", eta: "", colore: "#D32F2F",

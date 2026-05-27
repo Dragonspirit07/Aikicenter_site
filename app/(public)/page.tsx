@@ -82,7 +82,7 @@ export default async function OrariPage() {
         </a>{" "}
         o telefono al{" "}
         <a href="tel:3483556535" style={{ color: "var(--titoli)" }}>
-          348 355 6535
+          123 456 7890
         </a>
         .
       </h4>
