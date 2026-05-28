@@ -134,10 +134,6 @@ Crea un database MySQL e configura le seguenti tabelle:
 - `iscrizioni` — utenti registrati
 - `iscrizioni_lezioni` — tabella ponte utenti ↔ lezioni
 
-```bash
-mysql -u root -p aikicenter < aikicenter.sql
-```
-
 ### 5. Crea l'account admin
 
 Genera l'hash della password con lo script incluso:
