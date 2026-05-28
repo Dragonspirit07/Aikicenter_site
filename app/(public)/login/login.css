@@ -70,6 +70,7 @@
 }
 
 .login-field input, .login-field select {
+  width: 100%;
   padding: 0.65rem 0.9rem;
   border: 1px solid var(--bordi);
   border-radius: 8px;
@@ -87,7 +88,7 @@
   display: flex;
   gap: 1rem;
 }
-.login-field-row .login-field { flex: 1; }
+.login-field-row .login-field { flex: 1; min-width: 0; }
 
 .login-error {
   display: flex;

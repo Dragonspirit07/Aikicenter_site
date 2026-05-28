@@ -1,4 +1,4 @@
-import { signToken, verifyToken, JwtPayload } from "./jtw";
+import { signToken, verifyToken, JwtPayload } from "./jwt";
 
 export const USER_COOKIE_NAME = "aiki_user_token";
 export const USER_TOKEN_TTL_MS = 1000 * 60 * 60 * 8;

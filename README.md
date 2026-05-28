@@ -13,11 +13,12 @@ Sito web ufficiale dell'**Aiki Center ETS** di Parma, sviluppato con Next.js 16.
 ### Area Utente
 - Dashboard personale con dati profilo
 - Iscrizione e disiscrizione alle lezioni settimanali
+- Logout e eliminazione account
 
 ### Area Amministrativa
 - Gestione completa dei **corsi** (CRUD)
 - Gestione completa delle **lezioni** (CRUD) con controllo conflitti orari
-- Visualizzazione degli **utenti iscritti** e delle loro lezioni
+- Visualizzazione  ed eliminazione degli **utenti iscritti** e delle loro lezioni
 
 ---
 
@@ -72,7 +73,7 @@ Sito web ufficiale dell'**Aiki Center ETS** di Parma, sviluppato con Next.js 16.
 │   │               └── route.ts
 │   ├── lib/
 │   │   ├── db.ts              # Pool MySQL singleton
-│   │   ├── jtw.ts             # JWT admin (sign/verify)
+│   │   ├── jwt.ts             # JWT admin (sign/verify)
 │   │   ├── jwt-utente.ts      # JWT utente (sign/verify)
 │   │   ├── password.ts        # Hash e verifica PBKDF2
 │   │   └── models/            # Query DB (admin, corsi, lezioni, iscrizioni)

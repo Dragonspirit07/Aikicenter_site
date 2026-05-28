@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { findAdminByUsername } from "@/lib/models/admin";
 import { findByEmail } from "@/lib/models/iscrizioni";
 import { verifyPassword } from "@/lib/password";
-import { signToken, COOKIE_NAME, TOKEN_TTL_MS } from "@/lib/jtw";
+import { signToken, COOKIE_NAME, TOKEN_TTL_MS } from "@/lib/jwt";
 import { signUserToken, USER_COOKIE_NAME, USER_TOKEN_TTL_MS } from "@/lib/jwt-utente";
 
 export async function POST(req: NextRequest) {

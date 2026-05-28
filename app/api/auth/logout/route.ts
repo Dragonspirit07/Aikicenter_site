@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME } from "@/lib/jtw";
+import { COOKIE_NAME } from "@/lib/jwt";
 import { USER_COOKIE_NAME } from "@/lib/jwt-utente";
 
 export async function POST() {
