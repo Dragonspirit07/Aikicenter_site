@@ -2,9 +2,9 @@
 export function Navbar() {
   const links = [
     { href: "/",           label: "Home" },
-    { href: "/chi-siamo",  label: "Chi Siamo" },
+    { href: "https://www.aikicenter.it/chi-siamo.php",  label: "Chi Siamo" },
     { href: "/",      label: "Corsi" },
-    { href: "/istruttori", label: "Istruttori" }
+    { href: "https://www.aikicenter.it/istruttori.php", label: "Istruttori" }
   ];
 
   return (
