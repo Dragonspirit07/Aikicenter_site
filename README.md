@@ -1,36 +1,185 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aiki Center ETS — Sito Web
 
-## Getting Started
+Sito web ufficiale dell'**Aiki Center ETS** di Parma, sviluppato con Next.js 16. Permette la visualizzazione degli orari delle lezioni, la registrazione e il login degli utenti, la preiscrizione ai corsi e la gestione completa tramite pannello amministrativo.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Funzionalità
+
+### Pubblico
+- Visualizzazione degli orari settimanali con legenda dei corsi
+- Pagina login e registrazione utenti
+
+### Area Utente
+- Dashboard personale con dati profilo
+- Iscrizione e disiscrizione alle lezioni settimanali
+
+### Area Amministrativa
+- Gestione completa dei **corsi** (CRUD)
+- Gestione completa delle **lezioni** (CRUD) con controllo conflitti orari
+- Visualizzazione degli **utenti iscritti** e delle loro lezioni
+
+---
+
+## Stack Tecnologico
+
+| Layer | Tecnologia |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Linguaggio | TypeScript 5 |
+| Stile | CSS Modules + Tailwind CSS 4 |
+| Database | MySQL (mysql2) |
+| Autenticazione | JWT custom (HMAC-SHA256 via Web Crypto API) |
+| Hash password | PBKDF2 + SHA-256 via Web Crypto API |
+| Package manager | pnpm |
+
+---
+
+## Struttura del Progetto
+
+```
+├── app/
+│   ├── (public)/              # Layout pubblico (Navbar + Footer)
+│   │   ├── layout.tsx         # Layout con Navbar e Footer
+│   │   ├── page.tsx           # Homepage — orari lezioni
+│   │   ├── orari.css          # Stili pagina orari
+│   │   ├── login/             # Login e registrazione
+│   │   │   ├── page.tsx
+│   │   │   └── login.css
+│   │   └── utente/            # Dashboard utente
+│   │       ├── page.tsx
+│   │       └── utente.css
+│   ├── admin/                 # Pannello amministrativo
+│   │   ├── page.tsx
+│   │   └── admin.css
+│   ├── api/
+│   │   └── auth/
+│   │       ├── login/         # POST login (admin + utente)
+│   │       ├── logout/        # POST logout
+│   │       ├── registrazione/ # POST registrazione utente
+│   │       ├── admin/         # API protette admin (corsi, lezioni, iscrizioni)
+│   │       └── utente/        # API protette utente (iscrizioni lezioni)
+│   ├── lib/
+│   │   ├── db.ts              # Pool MySQL singleton
+│   │   ├── jtw.ts             # JWT admin (sign/verify)
+│   │   ├── jwt-utente.ts      # JWT utente (sign/verify)
+│   │   ├── password.ts        # Hash e verifica PBKDF2
+│   │   └── models/            # Query DB (admin, corsi, lezioni, iscrizioni)
+│   └── ui/                    # Componenti condivisi (Navbar, Footer)
+├── middleware.ts               # Middleware Next.js — protezione route
+├── scripts/
+│   └── generate-hash.mjs      # Utility per generare hash admin
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Installazione
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisiti
 
-## Learn More
+- Node.js ≥ 20.9
+- pnpm
+- MySQL / MariaDB
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Clona il repository
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+git clone <url-repository>
+cd progetto_informatica
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Installa le dipendenze
 
-## Deploy on Vercel
+```bash
+pnpm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Configura le variabili d'ambiente
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copia il file di esempio e compila i valori:
+
+```bash
+cp .env.example .env.local
+```
+
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=la_tua_password
+DB_NAME=aikicenter
+
+JWT_SECRET=stringa-casuale-di-almeno-32-caratteri!
+```
+
+### 4. Crea il database
+
+Crea un database MySQL e configura le seguenti tabelle:
+
+- `admins` — account amministratori
+- `corsi` — corsi offerti (nome, descrizione, età, colore)
+- `lezioni` — lezioni settimanali (giorno, orario, corso)
+- `iscrizioni` — utenti registrati
+- `iscrizioni_lezioni` — tabella ponte utenti ↔ lezioni
+
+```bash
+mysql -u root -p aikicenter < aikicenter.sql
+```
+
+### 5. Crea l'account admin
+
+Genera l'hash della password con lo script incluso:
+
+```bash
+# Modifica USERNAME e PASSWORD in scripts/generate-hash.mjs
+node scripts/generate-hash.mjs
+```
+
+Copia ed esegui la query `INSERT` mostrata nel terminale.
+
+### 6. Avvia il server di sviluppo
+
+```bash
+pnpm dev
+```
+
+L'app sarà disponibile su [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Autenticazione
+
+Il sistema gestisce **due tipi di utente** con cookie JWT separati:
+
+| Cookie | Percorso protetto | Ruolo |
+|---|---|---|
+| `aiki_admin_token` | `/admin`, `/api/auth/admin/*` | Amministratore |
+| `aiki_user_token` | `/utente`, `/api/auth/utente/*` | Utente registrato |
+
+I token hanno durata di **8 ore** e vengono verificati dal middleware `proxy.ts` ad ogni richiesta sulle route protette.
+
+Le password sono hashate con **PBKDF2 + SHA-256** (200.000 iterazioni, salt casuale a 16 byte) usando esclusivamente la Web Crypto API nativa — nessuna libreria esterna.
+
+---
+
+## Schema Database
+
+```
+admins              — account amministratori
+corsi               — corsi offerti (nome, descrizione, età, colore)
+lezioni             — lezioni settimanali (giorno, orario, corso)
+iscrizioni          — utenti registrati
+iscrizioni_lezioni  — tabella ponte utenti ↔ lezioni
+```
+
+---
+
+## Script
+
+| Comando | Descrizione |
+|---|---|
+| `pnpm dev` | Avvia il server di sviluppo |
+| `pnpm build` | Build di produzione |
+| `pnpm start` | Avvia il server di produzione |
+| `pnpm lint` | Esegue ESLint |
+| `node scripts/generate-hash.mjs` | Genera hash PBKDF2 per un nuovo admin |
