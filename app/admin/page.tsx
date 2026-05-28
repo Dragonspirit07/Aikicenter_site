@@ -213,7 +213,7 @@ export default function AdminPage() {
   // Modali
   const [corsoModal, setCorsoModal] = useState<null | "new" | Corso>(null);
   const [lezioneModal, setLezioneModal] = useState<null | "new" | Lezione>(null);
-  const [deleteTarget, setDeleteTarget] = useState<null | { type: "corso" | "lezione"; id: number; label: string }>(null);
+  const [deleteTarget, setDeleteTarget] = useState<null | { type: "corso" | "lezione" | "utente"; id: number; label: string }>(null);
   const [saving, setSaving] = useState(false);
 
   // ── Fetch ────────────────────────────────────────────────────────
@@ -314,6 +314,22 @@ export default function AdminPage() {
       const res = await fetch(`/api/auth/admin/lezioni/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error((await res.json()).error ?? "Errore");
       showToast("Lezione eliminata.", "ok");
+      setDeleteTarget(null);
+      fetchAll();
+    } catch (e) {
+      showToast((e as Error).message, "err");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // ── CRUD Utenti ──────────────────────────────────────────────────
+  async function deleteUtente(id: number) {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/auth/admin/iscrizioni/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error((await res.json()).error ?? "Errore");
+      showToast("Utente eliminato.", "ok");
       setDeleteTarget(null);
       fetchAll();
     } catch (e) {
@@ -537,11 +553,22 @@ export default function AdminPage() {
                     <span className="utente-tel">{utente.telefono}</span>
                     <span className="utente-data">Nato: {utente.data_nascita?.split("T")[0]}</span>
                   </div>
-                  <span className="utente-count">
-                    {utente.lezioni.length === 0
-                      ? "Nessuna lezione"
-                      : `${utente.lezioni.length} ${utente.lezioni.length === 1 ? "lezione" : "lezioni"}`}
-                  </span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+                    <span className="utente-count">
+                      {utente.lezioni.length === 0
+                        ? "Nessuna lezione"
+                        : `${utente.lezioni.length} ${utente.lezioni.length === 1 ? "lezione" : "lezioni"}`}
+                    </span>
+                    <button
+                      className="icon-btn delete"
+                      title="Elimina utente"
+                      onClick={() => setDeleteTarget({
+                        type: "utente",
+                        id: utente.id,
+                        label: `${utente.nome} ${utente.cognome} (${utente.email})`,
+                      })}
+                    >🗑️</button>
+                  </div>
                 </div>
                 {utente.lezioni.length > 0 && (
                   <div className="lezioni-table">
@@ -603,7 +630,8 @@ export default function AdminPage() {
           onCancel={() => setDeleteTarget(null)}
           onConfirm={() => {
             if (deleteTarget.type === "corso") deleteCorso(deleteTarget.id);
-            else deleteLezione(deleteTarget.id);
+            else if (deleteTarget.type === "lezione") deleteLezione(deleteTarget.id);
+            else deleteUtente(deleteTarget.id);
           }}
         />
       )}
