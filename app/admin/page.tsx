@@ -553,7 +553,7 @@ export default function AdminPage() {
                     <span className="utente-tel">{utente.telefono}</span>
                     <span className="utente-data">Nato: {utente.data_nascita?.split("T")[0]}</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem", flexShrink: 0 }}>
                     <span className="utente-count">
                       {utente.lezioni.length === 0
                         ? "Nessuna lezione"
