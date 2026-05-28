@@ -50,6 +50,10 @@ function getPool(): mysql.Pool {
   return globalForDb._mysqlPool;
 }
 
+export function getRawPool(): mysql.Pool {
+  return getPool();
+}
+
 export const pool = {
   query<T extends mysql.RowDataPacket[]>(
     sql: string,

@@ -41,6 +41,11 @@
   margin-bottom: 2rem;
 }
 .utente-header h1 { margin: 0; color: var(--titoli); }
+.utente-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
 
 .logout-btn {
   padding: 0.35rem 1rem;
@@ -188,6 +193,54 @@
   white-space: nowrap;
 }
 .lezione-eta { font-size: 0.78rem; color: var(--bordi); font-style: italic; }
+
+.delete-account-btn {
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-family: serif;
+  font-weight: bold;
+  background: transparent;
+  border: 2px solid #c0392b;
+  color: #c0392b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.delete-account-btn:hover { background: #c0392b; color: #fff; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  text-align: center;
+}
+.modal-content h3 { margin: 0 0 0.5rem; color: var(--titoli); }
+.modal-content p { margin: 0 0 1.5rem; color: var(--sottotitoli); font-size: 0.9rem; }
+.modal-actions { display: flex; gap: 0.8rem; justify-content: center; }
+.modal-btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: serif;
+  transition: all 0.2s;
+}
+.modal-btn-cancel { background: #eee; color: #333; }
+.modal-btn-cancel:hover { background: #ddd; }
+.modal-btn-confirm { background: #c0392b; color: #fff; }
+.modal-btn-confirm:hover { opacity: 0.85; }
 
 @media (max-width: 600px) {
   .utente-profilo-grid { grid-template-columns: 1fr; }

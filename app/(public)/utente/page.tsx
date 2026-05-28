@@ -34,6 +34,7 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const showToast = useCallback((msg: string, ok: boolean) => {
     setToast({ msg, ok });
@@ -94,6 +95,17 @@ export default function UserDashboard() {
     router.push("/login");
   }
 
+  async function handleDeleteAccount() {
+    try {
+      const res = await fetch("/api/auth/utente/iscrizioni", { method: "DELETE" });
+      if (!res.ok) throw new Error((await res.json()).error ?? "Errore");
+      router.push("/login");
+    } catch (e) {
+      showToast((e as Error).message, false);
+      setShowDeleteConfirm(false);
+    }
+  }
+
   function raggruppaPerGiorno(lezioniList: Lezione[]) {
     return GIORNI.map((giorno) => ({
       giorno,
@@ -123,7 +135,10 @@ export default function UserDashboard() {
 
       <div className="utente-header">
         <h1>Area Utente</h1>
-        <button className="logout-btn" onClick={handleLogout} type="button">Esci</button>
+        <div className="utente-header-actions">
+          <button className="logout-btn" onClick={handleLogout} type="button">Esci</button>
+          <button className="delete-account-btn" onClick={() => setShowDeleteConfirm(true)} type="button">Elimina account</button>
+        </div>
       </div>
 
       {profilo && (
@@ -134,6 +149,19 @@ export default function UserDashboard() {
             <div><strong>Email:</strong> {profilo.email}</div>
             <div><strong>Telefono:</strong> {profilo.telefono}</div>
             <div><strong>Data di nascita:</strong> {profilo.data_nascita?.split("T")[0]}</div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Eliminare l&apos;account?</h3>
+            <p>Tutti i dati e le iscrizioni verranno rimossi permanentemente.</p>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-cancel" onClick={() => setShowDeleteConfirm(false)} type="button">Annulla</button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleDeleteAccount} type="button">Elimina</button>
+            </div>
           </div>
         </div>
       )}

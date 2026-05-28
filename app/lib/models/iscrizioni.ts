@@ -68,6 +68,11 @@ export async function removeLezioneIscrizione(idIscrizione: number, idLezione: n
   return result.affectedRows > 0;
 }
 
+export async function deleteIscrizione(id: number): Promise<boolean> {
+  const [result] = await pool.execute("DELETE FROM iscrizioni WHERE id = ?", [id]);
+  return result.affectedRows > 0;
+}
+
 export async function getAllIscrizioni(): Promise<(Omit<IscrizioneRow, "password_hash"> & RowDataPacket)[]> {
   const [rows] = await pool.query<(Omit<IscrizioneRow, "password_hash"> & RowDataPacket)[]>(
     "SELECT id, nome, cognome, email, telefono, data_nascita FROM iscrizioni ORDER BY cognome, nome"

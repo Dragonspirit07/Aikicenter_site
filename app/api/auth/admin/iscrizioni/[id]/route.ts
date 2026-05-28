@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { pool } from "@/lib/db";
+import { deleteIscrizione } from "@/lib/models/iscrizioni";
 
 export async function DELETE(
   _req: Request,
@@ -7,11 +7,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const [result] = await pool.execute(
-      "DELETE FROM iscrizioni WHERE id = ?",
-      [Number(id)]
-    );
-    if (result.affectedRows === 0)
+    const deleted = await deleteIscrizione(Number(id));
+    if (!deleted)
       return NextResponse.json({ error: "Utente non trovato." }, { status: 404 });
     return NextResponse.json({ ok: true });
   } catch (e) {

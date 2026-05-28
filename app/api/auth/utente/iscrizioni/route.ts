@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyUserToken, USER_COOKIE_NAME } from "@/lib/jwt-utente";
-import { getIscrizioneById, getLezioniIscrizione, addLezioneIscrizione, removeLezioneIscrizione } from "@/lib/models/iscrizioni";
+import { getIscrizioneById, getLezioniIscrizione, addLezioneIscrizione, removeLezioneIscrizione, deleteIscrizione } from "@/lib/models/iscrizioni";
 import { getAllLezioni } from "@/lib/models/lezioni";
 
 async function getUser(req: NextRequest) {
@@ -55,5 +55,20 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Errore durante l'operazione." }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const user = await getUser(req);
+  if (!user) return NextResponse.json({ error: "Non autorizzato." }, { status: 401 });
+
+  try {
+    await deleteIscrizione(user.id);
+    const response = NextResponse.json({ ok: true });
+    response.cookies.set(USER_COOKIE_NAME, "", { maxAge: 0, path: "/" });
+    return response;
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: "Errore durante l'eliminazione dell'account." }, { status: 500 });
   }
 }

@@ -54,11 +54,22 @@ Sito web ufficiale dell'**Aiki Center ETS** di Parma, sviluppato con Next.js 16.
 │   │   └── admin.css
 │   ├── api/
 │   │   └── auth/
-│   │       ├── login/         # POST login (admin + utente)
-│   │       ├── logout/        # POST logout
-│   │       ├── registrazione/ # POST registrazione utente
-│   │       ├── admin/         # API protette admin (corsi, lezioni, iscrizioni)
-│   │       └── utente/        # API protette utente (iscrizioni lezioni)
+│   │       ├── login/             # POST login (admin + utente)
+│   │       ├── logout/            # POST logout
+│   │       ├── registrazione/     # POST registrazione utente
+│   │       ├── admin/
+│   │       │   ├── corsi/         # CRUD corsi
+│   │       │   │   ├── [id]/route.ts
+│   │       │   │   └── route.ts
+│   │       │   ├── lezioni/       # CRUD lezioni (con ctrl conflitti)
+│   │       │   │   ├── [id]/route.ts
+│   │       │   │   └── route.ts
+│   │       │   └── iscrizioni/    # GET/DELETE utenti
+│   │       │       ├── [id]/route.ts
+│   │       │       └── route.ts
+│   │       └── utente/
+│   │           └── iscrizioni/    # GET/POST/DELETE (profilo, lezioni, auto-eliminazione)
+│   │               └── route.ts
 │   ├── lib/
 │   │   ├── db.ts              # Pool MySQL singleton
 │   │   ├── jtw.ts             # JWT admin (sign/verify)
@@ -66,7 +77,7 @@ Sito web ufficiale dell'**Aiki Center ETS** di Parma, sviluppato con Next.js 16.
 │   │   ├── password.ts        # Hash e verifica PBKDF2
 │   │   └── models/            # Query DB (admin, corsi, lezioni, iscrizioni)
 │   └── ui/                    # Componenti condivisi (Navbar, Footer)
-├── middleware.ts               # Middleware Next.js — protezione route
+├── proxy.ts                    # Middleware Next.js — protezione route JWT
 ├── scripts/
 │   └── generate-hash.mjs      # Utility per generare hash admin
 ```
